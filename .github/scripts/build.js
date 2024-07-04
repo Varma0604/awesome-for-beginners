@@ -24,7 +24,8 @@ data.repositories.sort((a, b) => {
             categories[tech] = [];
         }
         categories[tech].push(repo);
-    }))
+    })
+);
 
 const sortedCategories = Object.fromEntries(Object.entries(categories).sort((a, b) => {
     const nameA = a[0].toUpperCase();
@@ -39,7 +40,7 @@ const sortedCategories = Object.fromEntries(Object.entries(categories).sort((a, 
 }));
 
 const toc = Object.keys(sortedCategories)
-    .map(t => `- [${t}](#${data.technologies[t] || t.toLowerCase()})`)
+    .map(t => `- [${t}](#${t.toLowerCase()})`)
     .join('\n');
 
 const content = Object.keys(sortedCategories)
@@ -48,24 +49,25 @@ const content = Object.keys(sortedCategories)
         return `## ${category}\n\n${repos}\n`
     }).join('\n');
 
-const sponsorList = data.sponsors.map(sponsor => `<td align="center"><a href="${sponsor.link}"><img src="${sponsor.image}" width="60px;" alt=""/><br/><sub><b>${sponsor.name}</b></sub></a></td>`)
+const sponsorList = data.sponsors.map(sponsor => `<td align="center"><a href="${sponsor.link}"><img src="${sponsor.image}" width="60px;" alt=""/><br/><sub><b>${sponsor.name}</b></sub></a></td>`);
 const sponsorRows = Math.ceil(sponsorList.length / 6);
 
 let sponsors = '';
 
-for (let i = 1; i <= sponsorRows; i++) {
+for (let i = 0; i < sponsorRows; i++) {
     sponsors += '<tr>';
     for(let j = 0; j < 6; j++) {
-        if (sponsorList.length > i*j) {
-            sponsors += sponsorList[i*j];
-        } else if (sponsorRows > 1) {
-            sponsors += '<td></td>'
+        const index = i * 6 + j;
+        if (index < sponsorList.length) {
+            sponsors += sponsorList[index];
+        } else {
+            sponsors += '<td></td>';
         }
     }
     sponsors += '</tr>';
 }
 
-sponsors = `<table>${sponsors}</table>`
+sponsors = `<table>${sponsors}</table>`;
 
 saveFile(TARGET, render(tpl, { toc, content, sponsors }));
 
